@@ -1,0 +1,76 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>电商后台管理系统</title>
+    <!---代码中实际部分可以抽取出来  Start--------->
+    <link href="/Scripts/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/Content/css/style.css" rel="stylesheet" />
+    <link href="/Content/css/common.css" rel="stylesheet" />
+    <script src="/Scripts/bootstrap/jquery-1.10.2.min.js"></script>
+    <script src="/Scripts/bootstrap/js/bootstrap.js"></script>
+    <script src="/Scripts/bootstrap/compute.js"></script>
+    <!----代码中实际部分可以抽取出来 End----------->
+</head>
+<body>
+    <!----头部Start-->
+    <div class="header">
+        <!-- <div class="headerLeft"> -->
+        <!-- <img src="./images/logo_03.jpg" alt=""/> -->
+        <!-- </div> -->
+        <div class="headerCenter">
+            <h1>电商后台管理系统</h1>
+
+        </div>
+        <div class="headerRight">
+            <span>@Session["UserName"] 用户您好!</span><span><a onclick="fun_tui()">退出登录</a></span>
+
+        </div>
+
+    </div>
+    <div style="clear: both;"></div>
+    <!----头部End------>
+    <!---主体部Start--->
+    <div class="body">
+        <div class="menuLeft">
+            <!---菜单为一级即可-->
+            <!---菜单开始 Start-->
+            <ul>
+                <li class="active" href="@Url.Action("UserIndex","User")">用户管理</li>
+                <li href="@Url.Action("CategoryIndex","ProductCategory")">商品产品分类</li>
+                <li href="@Url.Action("ProductIndex","Product")">商品管理</li>
+                <li href="@Url.Action("OrderIndex","Order")">订单管理</li>
+            </ul>
+
+            <!---菜单结束 End-->
+        </div>
+        <div class="menuRight">
+            <div class="contentCenter">
+                <!----使用Ifram嵌套 Start-->
+                <iframe src="@Url.Action("UserIndex","User")" id="iframeShow" width="100%" height="100%" frameborder="no" border="0" scrolling="no"></iframe>
+                <!----使用Ifram嵌套 End-->
+            </div>
+            <!---底部 Start-->
+            <div class="contentFooter">
+                <h4>@@CopyRight 物联网工程学院教研组 2020-2021</h4>
+            </div>
+            <!---底部 End-->
+        </div>
+
+    </div>
+
+    <!---主题部分End-->
+
+</body>
+</html>
+
+<script>
+    function fun_tui() {
+            window.location.href = "/Index/Secede";
+    }
+</script>

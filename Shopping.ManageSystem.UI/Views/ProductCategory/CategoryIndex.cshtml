@@ -1,0 +1,163 @@
+﻿@model PagedList<Shopping.ManageSystem.Model.ProductCategory>
+@using Webdiyer.WebControls.Mvc;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>电商后台管理系统-产品分类</title>
+    <!---代码中实际部分可以抽取出来  Start--------->
+    <link href="/Scripts/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/Scripts/bootstrap/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <script src="/Scripts/bootstrap/jquery-1.10.2.min.js"></script>
+    <script src="/Scripts/bootstrap/js/bootstrap.js"></script>
+    <script src="/Scripts/bootstrap/js/moment-with-locales.js"></script>
+    <script src="/Scripts/bootstrap/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/Scripts/bootstrap/js/bootstrapValidator.js"></script>
+    <link href="/Scripts/bootstrap/css/bootstrapValidator.css" rel="stylesheet" />
+    <script src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="/Scripts/MvcPager.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            $("#fromCategory").bootstrapValidator({
+                // 默认的提示消息
+                message: '值无效',
+                // 表单框里右侧的icon
+                feedbackIcons: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                submitHandler: function (validator, form, submitButton) {
+                    //Ajax方法
+                    $.ajax({
+                        url: "/ProductCategory/CategoryCreate",
+                        type: "post",
+                        data: $("#fromCategory").serialize(),
+                        success: function (data) {
+                            alert(data.Message);
+                            if (data.Code == 1) {
+                                $("#btnCLose").click(); //关闭该窗口
+                                location.reload();//重新加载一次页面
+                            }
+                        }
+                    });
+                },
+                fields: {
+                    CategoryName: {
+                        validators: {
+                            notEmpty: {
+                                message: "分类名称不能为空"
+                            }
+                        }
+                    },
+                    CategoryCode: {
+                        validators: {
+                            notEmpty: {
+                                message: "分类码不能为空"
+                            },
+                            remote: { // ajax校验，获得一个json数据（{'valid': true or false}）
+                                url: '/ProductCategory/UniqueCategory?CategoryCode=' + $("#fromCategory input[name=CategoryCode]").val(),       //验证地址
+                                message: '用户已存在',   //提示信息
+                                type: "post",//模式是post方式，post方式提交更好
+                                data: function (data) {  //自定义提交数据，默认为当前input name值
+                                    console.log(data);
+                                    return {
+                                        act: 'is_registered'
+                                    };
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+            });
+        });
+
+        //删除
+        function fun_categoryDel(id) {
+                if (confirm('请确认删除')) {
+                    $.ajax({
+                        url: '/ProductCategory/CategoryDelete?id=' + id,
+                        type: 'post',
+                        success: function (data) {
+                            alert(data.Message)
+                            if (data.Code == 1) {
+                                location.reload();//重新加载一次页面
+                            }
+                        }
+                    });
+                }
+            }
+    </script>
+    <!----代码中实际部分可以抽取出来 End----------->
+</head>
+<body class="container-fruit">
+    <!---上下文检索项 Start-->
+    <div class="row-fruit">
+
+        <div class="form-inline">
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#AddProductCategory">
+                <span class="glyphicon glyphicon-plus">新增</span>
+            </button>
+        </div>
+    </div>
+
+    @using (Ajax.BeginForm("ProductCategory", "CategoryIndex", new AjaxOptions { HttpMethod = "Get", UpdateTargetId = "categoryShow" }))
+    {
+
+    }
+
+    <div id="categoryShow">
+        @Html.Partial("_PartialCategory", Model);
+    </div>
+    <!---上下文检索项 End-->
+    <!-----新增模态框 Start 实际开发中可以提取,可以不提取  Start-->
+
+    <div class="modal fade" id="AddProductCategory" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        添加产品分类
+                    </h4>
+                </div>
+                <form class="form-horizontal" role="form" id="fromCategory">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="ProductName" class="col-sm-3 control-label">分类名称:</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="CategoryName" id="ProductName" placeholder="请输入分类名称">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ProductCategoryCode" class="col-sm-3 control-label">分类码:</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="CategoryCode" id="ProductCategoryCode" placeholder="请输入分类码:">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">
+                            关闭
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            添加
+                        </button>
+                    </div>
+                </form>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <!----------------新增模态框 End  实际开发中可以提取，可以不提取  End-->
+</body>
+</html>

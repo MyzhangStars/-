@@ -1,0 +1,117 @@
+﻿@using Shopping.ManageSystem.Model
+@using Webdiyer.WebControls.Mvc
+@model PagedList<Shopping.ManageSystem.Model.OrderFrom>
+
+<!----表格开始  Start-->
+<table class="table table-bordered table-hover">
+
+    <thead>
+        <tr>
+            <th><input type="checkbox" /></th>
+            <th>订单号</th>
+            <th>用户名</th>
+            <th>订单状态</th>
+            <th>下单时间</th>
+            <td>操作</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><input type="checkbox" /></td>
+                <td>@item.OrderFromNum</td>
+                <td>
+                    @item.Users.UserName
+                </td>
+                <td>
+                    @{
+                        int state = item.OrderFromState;
+                        var stateName = "";
+
+                        switch (state)
+                        {
+                            case 1:
+                                stateName = "未付款";
+                                break;
+                            case 2:
+                                stateName = "未发货";
+                                break;
+                            case 3:
+                                stateName = "已发货";
+                                break;
+                            case 4:
+                                stateName = "已签收";
+                                break;
+                            case 5:
+                                stateName = "拒签";
+                                break;
+                            case 6:
+                                stateName = "退款未退货";
+                                break;
+                            case 7:
+                                stateName = "退货未退款";
+                                break;
+                            default:
+                                break;
+                        }
+
+                        <span>@stateName</span>
+                    }
+                </td>
+                <td>@item.OrderFromTime.ToString("yyyy-MM-dd")</td>
+
+                <td>
+                    <button type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-pencil">编辑</span>
+                    </button>
+                    <button type="button" class="btn btn-default">
+                        <span class="glyphicon glyphicon-remove">删除</span>
+                    </button>
+                    <button type="button" class="btn btn-default" onclick="location.href='/OrderForm/ProductOrderIndex?id='@item.OrderFromID">
+                        <span class="glyphicon glyphicon-th-list">查看产品</span>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<!----表格开始  End-->
+<!----分页 Start-->
+<div class="text-center">
+    @Ajax.Pager(Model, new PagerOptions
+        {
+            /*
+             * 设置分页显示的样式
+             */
+            ActionName = "OrderIndex",                 //分页方法名
+            FirstPageText = "首页",
+            LastPageText = "最后一页",
+            NextPageText = "下一页",
+            PrevPageText = "上一页",
+            PageIndexParameterName = "pageIndex", //跟控制器的第一个参数要一致
+            ContainerTagName = "ul",
+            CssClass = "pagination",
+            CurrentPagerItemTemplate = "<li class=\"active\"><a href=\"#\">{0}</a></li>",
+            DisabledPagerItemTemplate = "<li class=\"disabled\"><a>{0}</a></li>",
+            PagerItemTemplate = "<li>{0}</li>",
+            GoToButtonId = "goBtn1",
+            PageIndexBoxId = "pageBox1",
+            PageIndexOutOfRangeErrorMessage = "您输入的页码超出范围!"
+
+        },
+
+        new MvcAjaxOptions
+        {
+            HttpMethod = "get",
+            UpdateTargetId = "orderFrom",//更新数据的标签ID
+            DataFormId = "form0"    //分页对应的条件搜索表单ID,
+        })
+
+    <span style="display:inline-block;  position:relative;top:-30px;">
+        共 @Model.TotalPageCount 页 @Model.TotalItemCount 条记录，当前为第 @Model.CurrentPageIndex 页,
+        跳转到第<input type="text" id="pageBox1" style="width:30px" />页<button id="goBtn1">跳转</button>
+    </span>
+</div>
+
+<!----分页 End-->

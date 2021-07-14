@@ -1,0 +1,97 @@
+﻿@model PagedList<Shopping.ManageSystem.Model.User>
+@using Webdiyer.WebControls.Mvc;
+
+<!----表格开始  Start-->
+<table class="table table-bordered table-hover">
+
+    <thead>
+        <tr>
+            <th><input type="checkbox" id="cb_head" onchange="fun_quan()" /></th>
+            <th>用户名</th>
+            <th>是否逻辑删除</th>
+            <th>性别</th>
+            <th>邮箱</th>
+            <th>修改时间</th>
+            <td>操作</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><input class="cb_body" type="checkbox" value="@item.UserID" /></td>
+                <td>@item.UserName</td>
+                <td>
+                    @if (item.Is_Delete)
+                    {
+                        <span class="glyphicon glyphicon-remove"></span>
+                    }
+                    else
+                    {
+                        <span class="glyphicon glyphicon-ok"></span>
+                    }
+                </td>
+                <td>
+                    @if (item.UserSex)
+                    {
+                    <span>男</span>
+                    }
+                    else
+                    {
+                        <span>女</span>
+                    }
+                </td>
+                <td>@item.UserEmail</td>
+                <td>@item.UserTime.ToString("yyyy-MM-dd")</td>
+                <td>
+                    <button type="button" class="btn btn-default" onclick="fun_Edit(@item.UserID)" data-toggle="modal" data-target="#UserEdit">
+                        <span class="glyphicon glyphicon-pencil">编辑</span>
+                    </button>
+                    <button type="button" class="btn btn-default" onclick="fun_del(@item.UserID)">
+                        <span class="glyphicon glyphicon-remove">删除</span>
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<!----表格结束  End-->
+<!----分页开始  Start-->
+
+<div class="text-center">
+    @Ajax.Pager(Model, new PagerOptions
+        {
+            /*
+             * 设置分页显示的样式
+             */
+            ActionName = "UserIndex",                 //分页方法名
+            FirstPageText = "首页",
+            LastPageText = "最后一页",
+            NextPageText = "下一页",
+            PrevPageText = "上一页",
+            PageIndexParameterName = "pageIndex", //跟控制器的第一个参数要一致
+            ContainerTagName = "ul",
+            CssClass = "pagination",
+            CurrentPagerItemTemplate = "<li class=\"active\"><a href=\"#\">{0}</a></li>",
+            DisabledPagerItemTemplate = "<li class=\"disabled\"><a>{0}</a></li>",
+            PagerItemTemplate = "<li>{0}</li>",
+            GoToButtonId = "goBtn1",
+            PageIndexBoxId = "pageBox1"
+
+        },
+
+        new MvcAjaxOptions
+        {
+            HttpMethod = "get",
+            UpdateTargetId = "show",//更新数据的标签ID
+            DataFormId = "form0"    //分页对应的条件搜索表单ID,
+        })
+
+    <span style="display:inline-block;  position:relative;top:-30px;">
+        共 @Model.TotalPageCount 页 @Model.TotalItemCount 条记录，当前为第 @Model.CurrentPageIndex 页
+    </span>
+</div>
+
+<!----分页结束  End-->
+
+<script src="/Scripts/jquery.unobtrusive-ajax.min.js"></script>
